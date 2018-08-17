@@ -1,0 +1,133 @@
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /var/www/>
+		Options FollowSymLinks MultiViews
+		AllowOverride None
+		Order deny,allow
+		deny from all
+	</Directory>
+
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+
+</VirtualHost>
+<VirtualHost *:80>
+        DocumentRoot "/var/www/bc-musc1"
+        ServerName musc1.benefitcoach.net
+</VirtualHost>
+<VirtualHost *:80>
+        DocumentRoot "/var/www/bc-musc2"
+        ServerName musc2.benefitcoach.net
+</VirtualHost>
+<VirtualHost *:80>
+        DocumentRoot "/var/www/bc"
+        ServerAlias *.12ftdemo.com
+
+RewriteEngine on
+
+####
+# The line below sets the rewrite condition for mod_rewrite.so.
+# That is, if the server port does not equal 443, then this condition is true
+####
+
+RewriteCond %{SERVER_PORT} !^443$
+
+####
+# The line below is the rule, it states that if above condition is true,
+# and the request can be any url, then redirect everything to https:// plus
+# the original url that was requested.
+####
+
+RewriteRule ^/(.*) https://%{HTTP_HOST}/$1 [NC,R,L]
+</VirtualHost>
+
+#<VirtualHost *:443>
+#        DocumentRoot "/var/www/dropsite"
+#        ServerName dsadmin.12ftdemo.com 
+#        SSLEngine on
+#        SSLCertificateFile /etc/certs/benefitCoachEntrust.crt
+#        SSLCertificateKeyFile /etc/certs/benefitCoachEntrust.key
+#        SSLCertificateChainFile /etc/certs/entrust.crt
+#</VirtualHost>
+<VirtualHost *:4433>
+        DocumentRoot "/var/www/dropsite/dropsite"
+        ServerName dropsite.12ftdemo.com 
+        SSLEngine on
+        SSLCertificateFile /etc/certs/cert.pem
+        SSLCertificateKeyFile /etc/certs/key.pem
+        SSLCertificateChainFile /etc/certs/gd_bundle.crt
+#   SSL Protocol support:
+# List the enable protocol levels with which clients will be able to
+# connect.  Disable SSLv2 access by default:
+SSLProtocol -all +SSLv3 +TLSv1
+#   SSL Cipher Suite:
+# List the ciphers that the client is permitted to negotiate.
+# See the mod_ssl documentation for a complete list.
+#SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+#SSLCipherSuite HIGH:MEDIUM
+#SSLCipherSuite ALL:!aNULL:!ADH:!eNULL:!LOW:!EXP:RC4+RSA:+HIGH:+MEDIUM
+#From last security audit:
+SSLCipherSuite EXP:RC4+RSA:+HIGH:+MEDIUM
+</VirtualHost>
+<VirtualHost *:4433>
+        DocumentRoot "/var/www/dropsite"
+        ServerName admin.dropsite.12ftdemo.com 
+        SSLEngine on
+        SSLCertificateFile /etc/certs/cert.pem
+        SSLCertificateKeyFile /etc/certs/key.pem
+        SSLCertificateChainFile /etc/certs/gd_bundle.crt
+#   SSL Protocol support:
+# List the enable protocol levels with which clients will be able to
+# connect.  Disable SSLv2 access by default:
+SSLProtocol -all +SSLv3 +TLSv1
+#   SSL Cipher Suite:
+# List the ciphers that the client is permitted to negotiate.
+# See the mod_ssl documentation for a complete list.
+#SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+#SSLCipherSuite HIGH:MEDIUM
+#SSLCipherSuite ALL:!aNULL:!ADH:!eNULL:!LOW:!EXP:RC4+RSA:+HIGH:+MEDIUM
+#From last security audit:
+SSLCipherSuite EXP:RC4+RSA:+HIGH:+MEDIUM
+</VirtualHost>
+<VirtualHost *:443>
+        DocumentRoot "/var/www/bc"
+       ServerName www.12ftdemo.com
+        ServerAlias *.12ftdemo.com
+#	ServerAlias *.com
+        SSLEngine on
+#        ErrorLog logs/benefitcoach-error_log
+#        LogLevel debug
+#        CustomLog logs/benefitcoach-access_log common
+        ErrorDocument 400 https://hca.benefitcoach.net/
+        SSLCertificateFile /etc/certs/benefitCoachEntrust.crt
+        SSLCertificateKeyFile /etc/certs/benefitCoachEntrust.key
+        SSLCertificateChainFile /etc/certs/entrust.crt
+        #SSLCertificateFile /etc/certs/multipass.crt
+        #SSLCertificateKeyFile /etc/certs/multipass.pem
+        #SSLCertificateChainFile /etc/certs/gd_intermediate_bundle.crt
+<Directory "/var/www/bc">
+FileETag MTime Size
+</Directory>
+        RewriteEngine On
+        RewriteCond %{HTTP_HOST} ^lonestarprovidernetwork\.benefitcoach\.net$ [NC]
+        RewriteRule ^(.*)$ https://lonestar.benefitcoach.net [R=301,L]
+
+        <Directory "/var/www/bc-hca">
+FileETag MTime Size
+                Allow from all
+                Options +Indexes
+        </Directory>
+</VirtualHost>
